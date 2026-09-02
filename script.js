@@ -42,29 +42,27 @@ const colorLabels={
 const standardColorHex={
   "الأبيض":"#f2f2f2","الأسود":"#111111","الغوز / الوردي":"#67c8c1","الأحمر":"#bd2525","الأخضر":"#248345","الأزرق":"#2f6fca","الأصفر":"#e0c52b","البرتقالي":"#e47b24","البنفسجي":"#7b45a4","الوردي":"#e58bab","البني":"#70462f","البيج":"#d8c29d","الرمادي":"#858585","الكحلي":"#24355f","الفيروزي":"#2bb9ad","السماوي":"#69cde4","الذهبي":"#d6ab43","الفضي":"#b9b9b9","الباج":"#cdbb96"
 };
-const mirrorAssets={
-  "plexy|الغوز miroir":"colors/plexy_colors/plexy_ghoz_miroir.jpg",
-  "plexy|Argenté miroir":"colors/plexy_colors/plexy_argente_miroir.jpg",
-  "plexy|Doré miroir":"colors/plexy_colors/plexy_dore_miroir.jpg",
-  "plexy|Bronze miroir":"colors/plexy_colors/plexy_bronze_miroir.jpg",
-  "wood|الغوز miroir":"colors/3od_colors/3od_ghoz_miroir.jpg",
-  "wood|Argenté miroir":"colors/3od_colors/3od_argente_miroir.jpg",
-  "wood|Doré miroir":"colors/3od_colors/3od_dore_miroir.jpg",
-  "wood|Bronze miroir":"colors/3od_colors/3od_bronze_miroir.jpg",
-  "combo-different|الغوز miroir":"colors/3od_plexy_colors_different/combo_ghoz_miroir.jpg",
-  "combo-different|Argenté miroir":"colors/3od_plexy_colors_different/combo_argente_miroir.jpg",
-  "combo-different|Doré miroir":"colors/3od_plexy_colors_different/combo_dore_miroir.jpg",
-  "combo-different|Bronze miroir":"colors/3od_plexy_colors_different/combo_bronze_miroir.jpg",
-  "combo-uniform|الغوز miroir":"colors/3od_plexy_colors_uniform/combo_ghoz_miroir.jpg",
-  "combo-uniform|Argenté miroir":"colors/3od_plexy_colors_uniform/combo_argente_miroir.jpg",
-  "combo-uniform|Doré miroir":"colors/3od_plexy_colors_uniform/combo_dore_miroir.jpg",
-  "combo-uniform|Bronze miroir":"colors/3od_plexy_colors_uniform/combo_bronze_miroir.jpg"
-};
 const colorBaseAssets={
   plexy:'colors/plexy_colors/model.png',
   wood:'colors/3od_colors/model.png',
   'combo-different':'colors/3od_plexy_colors_different/model.png',
   'combo-uniform':'colors/3od_plexy_colors_uniform/model.png'
+};
+
+// Exact material masks made from the photographic model.png files.
+// Only these areas are recoloured; the background, engraving, flower, gold details,
+// reflections and stand stay in their original pixels.
+const colorMaskAssets={
+  plexy:{material:'colors/plexy_colors/layers/material_mask.png'},
+  wood:{material:'colors/3od_colors/layers/material_mask.png'},
+  'combo-different':{
+    plexy:'colors/3od_plexy_colors_different/layers/plexy_mask.png',
+    wood:'colors/3od_plexy_colors_different/layers/wood_mask.png'
+  },
+  'combo-uniform':{
+    plexy:'colors/3od_plexy_colors_uniform/layers/plexy_mask.png',
+    wood:'colors/3od_plexy_colors_uniform/layers/wood_mask.png'
+  }
 };
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
@@ -189,25 +187,24 @@ function isMirrorColor(color){return typeof color==='string' && color.toLocaleLo
 function mirrorPalette(color){
   const key=String(color||'').toLocaleLowerCase();
   return {
-    'الغوز miroir':{base:[218,135,165],dark:[82,38,52],light:[255,205,220]},
-    'argenté miroir':{base:[205,210,220],dark:[55,60,72],light:[255,255,255]},
-    'doré miroir':{base:[224,165,48],dark:[72,38,10],light:[255,222,105]},
-    'bronze miroir':{base:[170,92,48],dark:[55,27,14],light:[225,145,82]}
-  }[key]||{base:[205,210,220],dark:[55,60,72],light:[255,255,255]};
+    'الغوز miroir':{base:[218,135,165],dark:[78,36,50],light:[255,205,220]},
+    'argenté miroir':{base:[190,198,212],dark:[42,48,60],light:[255,255,255]},
+    'doré miroir':{base:[218,157,42],dark:[70,35,8],light:[255,224,115]},
+    'bronze miroir':{base:[156,79,39],dark:[48,22,12],light:[220,137,78]}
+  }[key]||{base:[190,198,212],dark:[42,48,60],light:[255,255,255]};
 }
 
 function mirrorRgb(color,x,y,width,height,originalR,originalG,originalB){
   const pal=mirrorPalette(color);
   const lum=(0.2126*originalR+0.7152*originalG+0.0722*originalB)/255;
   const light=Math.max(0,Math.min(1,lum));
-  const band=.5+.5*Math.sin((x+y*.72)*.035);
-  const shine=Math.pow(Math.max(0,band),7);
-  const contrast=.30+.95*light;
-  const mix=.18+.72*band;
+  const wave=.5+.5*Math.sin((x*0.035)+(y*0.018));
+  const shine=Math.pow(Math.max(0,wave),8);
+  const reflection=.18+.68*wave;
   const out=[];
   for(let c=0;c<3;c++){
-    const metallic=pal.dark[c]*(1-mix)+pal.base[c]*mix;
-    out[c]=Math.min(255,metallic*contrast+pal.light[c]*shine*.55);
+    const metallic=pal.dark[c]*(1-reflection)+pal.base[c]*reflection;
+    out[c]=Math.min(255,metallic*(.48+.78*light)+pal.light[c]*shine*.62);
   }
   return out;
 }
@@ -221,94 +218,29 @@ function loadImage(src){
   });
 }
 
-/*
- * The old PNG masks were made for a different flat mockup and do not line up
- * with the photographic model.png files. Build the mask directly from the
- * actual model pixels so the background, shadow and reflection are never tinted.
- */
-const derivedMaskCache=new Map();
-
-function buildMaterialMask(imgData,width,height,kind,mode){
-  const cacheKey=`${mode}|${kind}|${width}x${height}`;
-  if(derivedMaskCache.has(cacheKey))return derivedMaskCache.get(cacheKey);
-
-  const src=imgData.data;
-  const total=width*height;
-  const candidate=new Uint8Array(total);
-
-  for(let p=0,i=0;p<total;p++,i+=4){
-    const r=src[i],g=src[i+1],b=src[i+2];
-    const max=Math.max(r,g,b),min=Math.min(r,g,b);
-    const bright=(r+g+b)/3;
-
-    if(kind==='plexy'){
-      // White/clear plexy plate: neutral and bright, excluding gold lettering.
-      candidate[p]=(bright>115 && min>105 && max-min<65 && b>120)?1:0;
-    }else{
-      // Warm wood: red/orange/brown pixels, excluding the dark background.
-      candidate[p]=(bright>20 && r>g+18 && g>b+10 && max-min>25)?1:0;
-    }
-  }
-
-  const seeds=kind==='plexy'
-    ? (mode==='plexy' ? [[.50,.62],[.48,.58]] : [[.50,.42],[.48,.46]])
-    : (mode==='wood' ? [[.50,.42],[.50,.48]] : [[.50,.62],[.48,.58]]);
-
-  let seed=-1;
-  for(const [sx,sy] of seeds){
-    const cx=Math.round(sx*(width-1)),cy=Math.round(sy*(height-1));
-    for(let radius=0;radius<=50 && seed<0;radius++){
-      for(let dy=-radius;dy<=radius && seed<0;dy++){
-        for(let dx=-radius;dx<=radius;dx++){
-          const x=cx+dx,y=cy+dy;
-          if(x<0||y<0||x>=width||y>=height)continue;
-          const p=y*width+x;
-          if(candidate[p]){seed=p;break}
-        }
-      }
-    }
-    if(seed>=0)break;
-  }
-
-  const out=new Uint8Array(total);
-  if(seed<0){
-    derivedMaskCache.set(cacheKey,out);
-    return out;
-  }
-
-  const queue=new Int32Array(total);
-  let head=0,tail=0;
-  queue[tail++]=seed;
-  out[seed]=255;
-
-  while(head<tail){
-    const p=queue[head++];
-    const x=p%width;
-
-    const n1=p-width,n2=p+width,n3=p-1,n4=p+1;
-    if(n1>=0 && candidate[n1] && !out[n1]){out[n1]=255;queue[tail++]=n1}
-    if(n2<total && candidate[n2] && !out[n2]){out[n2]=255;queue[tail++]=n2}
-    if(x>0 && candidate[n3] && !out[n3]){out[n3]=255;queue[tail++]=n3}
-    if(x<width-1 && candidate[n4] && !out[n4]){out[n4]=255;queue[tail++]=n4}
-  }
-
-  derivedMaskCache.set(cacheKey,out);
-  return out;
+const colorMaskCache=new Map();
+async function loadColorMask(src,width,height){
+  const key=`${src}|${width}x${height}`;
+  if(colorMaskCache.has(key))return colorMaskCache.get(key);
+  const img=await loadImage(src);
+  const c=document.createElement('canvas');
+  c.width=width;c.height=height;
+  const ctx=c.getContext('2d',{willReadFrequently:true});
+  ctx.drawImage(img,0,0,width,height);
+  const data=ctx.getImageData(0,0,width,height).data;
+  const mask=new Uint8Array(width*height);
+  for(let p=0,i=0;p<mask.length;p++,i+=4)mask[p]=data[i];
+  colorMaskCache.set(key,mask);
+  return mask;
 }
 
 function applyTint(px,idx,target,originalR,originalG,originalB){
   const lum=(0.2126*originalR+0.7152*originalG+0.0722*originalB)/255;
-  const shade=Math.max(.38,Math.min(1.12,lum*1.15));
+  // Preserve the photographic texture/shadows while replacing only the material hue.
+  const shade=Math.max(.42,Math.min(1.18,.52+lum*.72));
   px[idx]=Math.min(255,target.r*shade);
   px[idx+1]=Math.min(255,target.g*shade);
   px[idx+2]=Math.min(255,target.b*shade);
-}
-
-function applyMirror(px,idx,color,x,y,width,height,originalR,originalG,originalB){
-  const [rr,gg,bb]=mirrorRgb(color,x,y,width,height,originalR,originalG,originalB);
-  px[idx]=rr;
-  px[idx+1]=gg;
-  px[idx+2]=bb;
 }
 
 async function recolorCanvas(img,mode,colorA,colorB,colorAName='',colorBName=''){
@@ -319,65 +251,59 @@ async function recolorCanvas(img,mode,colorA,colorB,colorAName='',colorBName='')
     const ctx=canvas.getContext('2d',{willReadFrequently:true});
     const width=img.naturalWidth;
     const height=img.naturalHeight;
-
     canvas.width=width;
     canvas.height=height;
+
+    // Start from the untouched photographic model. This is the fixed background.
     ctx.clearRect(0,0,width,height);
     ctx.drawImage(img,0,0);
-
     const data=ctx.getImageData(0,0,width,height);
     const px=data.data;
+    const assets=colorMaskAssets[mode];
 
-    const maskPlexy=(mode==='plexy'||mode==='combo-different'||mode==='combo-uniform')
-      ? buildMaterialMask(data,width,height,'plexy',mode)
-      : null;
-    const maskWood=(mode==='wood'||mode==='combo-different'||mode==='combo-uniform')
-      ? buildMaterialMask(data,width,height,'wood',mode)
-      : null;
+    let plexyMask=null,woodMask=null;
+    if(mode==='plexy'){
+      plexyMask=await loadColorMask(assets.material,width,height);
+    }else if(mode==='wood'){
+      woodMask=await loadColorMask(assets.material,width,height);
+    }else{
+      plexyMask=await loadColorMask(assets.plexy,width,height);
+      woodMask=await loadColorMask(assets.wood,width,height);
+    }
 
-    for(let i=0;i<px.length;i+=4){
+    for(let p=0,i=0;p<width*height;p++,i+=4){
       if(!px[i+3])continue;
 
-      const r=px[i],g=px[i+1],bl=px[i+2];
-      const p=i/4;
-      const x=p%width,y=Math.floor(p/width);
-
-      // Keep the original gold decorations/clasp untouched.
-      const isGold=(r>125 && g>90 && g<210 && bl<120 && r>g*1.12);
-
-      let target=null;
-      let targetName='';
-      let maskAlpha=0;
-
+      let target=null,targetName='',m=0;
       if(mode==='plexy'){
-        maskAlpha=maskPlexy[p];
-        if(maskAlpha && !isGold){target=colorA;targetName=colorAName}
+        m=plexyMask[p]/255;
+        target=colorA;targetName=colorAName;
       }else if(mode==='wood'){
-        maskAlpha=maskWood[p];
-        if(maskAlpha && !isGold){target=colorA;targetName=colorAName}
+        m=woodMask[p]/255;
+        target=colorA;targetName=colorAName;
       }else if(mode==='combo-different'){
-        const pa=maskPlexy[p],pb=maskWood[p];
-        if(pa && !isGold){target=colorA;targetName=colorAName;maskAlpha=pa}
-        else if(pb && !isGold){target=colorB;targetName=colorBName;maskAlpha=pb}
+        if(plexyMask[p]){m=plexyMask[p]/255;target=colorA;targetName=colorAName}
+        else if(woodMask[p]){m=woodMask[p]/255;target=colorB;targetName=colorBName}
       }else if(mode==='combo-uniform'){
-        const pa=maskPlexy[p],pb=maskWood[p];
-        if(pa && !isGold){target=colorA;targetName=colorAName;maskAlpha=pa}
-        else if(pb && !isGold){target=colorA;targetName=colorAName;maskAlpha=pb}
+        if(plexyMask[p]){m=plexyMask[p]/255;target=colorA;targetName=colorAName}
+        else if(woodMask[p]){m=woodMask[p]/255;target=colorA;targetName=colorAName}
       }
+      if(!target||m<=0)continue;
 
-      if(!target||!maskAlpha)continue;
-
-      const m=maskAlpha/255;
-      const oldR=r,oldG=g,oldB=bl;
-
+      const oldR=px[i],oldG=px[i+1],oldB=px[i+2];
+      const x=p%width,y=Math.floor(p/width);
+      let rgb;
       if(isMirrorColor(targetName)){
-        const rgb=mirrorRgb(targetName,x,y,width,height,oldR,oldG,oldB);
-        px[i]=oldR*(1-m)+rgb[0]*m;
-        px[i+1]=oldG*(1-m)+rgb[1]*m;
-        px[i+2]=oldB*(1-m)+rgb[2]*m;
+        rgb=mirrorRgb(targetName,x,y,width,height,oldR,oldG,oldB);
       }else{
-        applyTint(px,i,target,oldR,oldG,oldB);
+        rgb=[target.r,target.g,target.b];
+        const lum=(0.2126*oldR+0.7152*oldG+0.0722*oldB)/255;
+        const shade=Math.max(.42,Math.min(1.18,.52+lum*.72));
+        rgb=[rgb[0]*shade,rgb[1]*shade,rgb[2]*shade];
       }
+      px[i]=oldR*(1-m)+Math.min(255,rgb[0])*m;
+      px[i+1]=oldG*(1-m)+Math.min(255,rgb[1])*m;
+      px[i+2]=oldB*(1-m)+Math.min(255,rgb[2])*m;
     }
 
     ctx.putImageData(data,0,0);
@@ -408,37 +334,33 @@ async function updateColorPreview(){
   if(!state.selected)return;
 
   let mode,colorA,colorB,colorAName='',colorBName='';
-
   if(state.category==='plexi'){
     mode='plexy';
     colorAName=state.colorSelections.plexi;
-    colorA=standardColorHex[colorAName]||'#ddd';
+    colorA=hexRgb(standardColorHex[colorAName])||{r:221,g:221,b:221};
   }else if(state.category==='wood'){
     mode='wood';
     colorAName=state.colorSelections.wood;
-    colorA=standardColorHex[colorAName]||'#8a5a3b';
+    colorA=hexRgb(standardColorHex[colorAName])||{r:138,g:90,b:59};
   }else if(state.comboMode==='uniform'){
     mode='combo-uniform';
     colorAName=state.colorSelections.comboUniform;
-    colorA=standardColorHex[colorAName]||'#b27a48';
+    colorA=hexRgb(standardColorHex[colorAName])||{r:178,g:122,b:72};
   }else{
     mode='combo-different';
     colorAName=state.colorSelections.comboPlexi;
     colorBName=state.colorSelections.comboWood;
-    colorA=standardColorHex[colorAName]||'#ddd';
-    colorB=standardColorHex[colorBName]||'#8a5a3b';
+    colorA=hexRgb(standardColorHex[colorAName])||{r:221,g:221,b:221};
+    colorB=hexRgb(standardColorHex[colorBName])||{r:138,g:90,b:59};
   }
 
   const baseSrc=colorBaseAssets[mode];
-
   if(!colorAName || (mode==='combo-different'&&!colorBName)){
     showPreviewImage(baseSrc);
     return;
   }
 
   try{
-    // Always recolor the real photographic model. The old ready-made mirror JPGs
-    // were flat mockups, so they are intentionally no longer used.
     const base=await loadImage(baseSrc);
     await recolorCanvas(base,mode,colorA,colorB,colorAName,colorBName);
   }catch(err){

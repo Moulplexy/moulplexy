@@ -1,18 +1,15 @@
-# نظام الألوان — MOULE PLEXY
+COLOR CUSTOMIZATION ASSET SYSTEM
 
-جميع ملفات التخصيص موجودة داخل مجلد واحد اسمه `colors/`.
+The customization system is layer-based. The photographic model is always the base image. Only dedicated material masks are recolored.
 
-## المجلدات
+Folders:
+- plexy_colors/                  -> Plexy only
+- 3od_colors/                    -> wood only
+- 3od_plexy_colors_different/    -> Plexy + wood, separate colors
+- 3od_plexy_colors_uniform/      -> Plexy + wood, one shared color
 
-- `plexy_colors/` — نموذج Plexy واحد ثابت، مع تغيير اللون العادي مباشرة، وصور جاهزة لألوان miroir.
-- `3od_colors/` — نموذج العود، مع تغيير اللون العادي مباشرة، وصور جاهزة لألوان miroir.
-- `3od_plexy_colors_different/` — نموذج العود + Plexy لاختيار لون مستقل لكل مادة.
-- `3od_plexy_colors_uniform/` — نموذج العود + Plexy بلون موحد.
+Each model uses model.png plus 700x700 masks in layers/. The masks were made for the exact model.png they belong to.
 
-كل مجلد يحتوي على `base.png` و`model.png` لنفس نموذج المنتج الخاص به، إضافة إلى صور `miroir` الجاهزة.
+Fixed elements such as the background, writing, flower, gold decoration, stand and reflections are never recolored.
 
-## ملاحظة تقنية
-
-الألوان العادية يتم تطبيقها داخل الموقع مباشرة على مناطق المنتج مع الحفاظ على الإضاءة والحدود والظلال. ألوان `miroir` لها صور جاهزة مرتبطة بالاختيار.
-
-لا تغيّر أسماء الملفات أو بنية مجلد `colors/` بدون تحديث المسارات الموجودة في `script.js`.
+Mirror colors are rendered by script.js only inside the corresponding material masks; old flat mirror JPG mockups are not used by the customization preview.
