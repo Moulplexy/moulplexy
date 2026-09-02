@@ -1,9 +1,16 @@
-# Put ONE video URL here.
-# Supported examples:
+# VIDEO PLAYLIST — put one video URL per line.
+# The website shows the videos in this same order.
+# Supported:
 # - Instagram Reel URL
-# - YouTube URL
-# - TikTok URL
-# - Direct video URL (.mp4 / .webm / .ogg / .mov when the server allows browser playback)
-# The website automatically adapts the player format when it can detect the source type.
-
+# - YouTube URL / Short URL
+# - TikTok video URL
+# - Facebook video URL
+# - Direct video URL (.mp4 / .webm / .ogg / .mov / .m4v)
+#
+# Controls:
+# - Click a platform button to jump to its video.
+# - Use the arrows to move between videos.
+# - Press X to close the video and return to the MOULE PLEXY logo.
+#
+# Add your Instagram/Facebook/YouTube video links below the TikTok link.
 https://www.tiktok.com/@mouleplexy/video/7680973645598018837
