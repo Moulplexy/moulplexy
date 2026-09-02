@@ -262,28 +262,48 @@ function renderMaterialChoices(){
   const section=$('#materialChoice'); if(!section)return;
   section.hidden=false;
   const single=$('#singleMaterialPicker'), separate=$('#separateMaterialPickers'), uniform=$('#uniformMaterialPicker'), mode=$('#comboMode');
-  // Explicitly hide every unused panel first; this prevents the two combo tables from appearing together.
-  single.hidden=true; separate.hidden=true; uniform.hidden=true; mode.hidden=true;
+  // IMPORTANT: some site CSS can override the native [hidden] attribute (for example with
+  // display:flex !important). We therefore control visibility in two ways: hidden + an
+  // inline !important display rule. This guarantees that only the active picker exists
+  // visually in the combo mode.
+  const setPanelVisible=(el,visible)=>{
+    if(!el)return;
+    el.hidden=!visible;
+    el.style.setProperty('display',visible?'':'none','important');
+    el.setAttribute('aria-hidden',visible?'false':'true');
+  };
+
+  // Always start by hiding ALL picker panels.
+  setPanelVisible(single,false);
+  setPanelVisible(separate,false);
+  setPanelVisible(uniform,false);
+  setPanelVisible(mode,false);
   if(state.category==='plexi'){
-    single.hidden=false;
+    setPanelVisible(single,true);
     $('#materialChoiceTitle').textContent='لون Plexy';
     $('#materialChoiceDescription').textContent='اختر لون Plexy من القائمة المتوفرة فقط.';
     renderMaterialPicker(single,'plexi','بليكسي',materialOptions.plexi);
   }else if(state.category==='wood'){
-    single.hidden=false;
+    setPanelVisible(single,true);
     $('#materialChoiceTitle').textContent='لون العود';
     $('#materialChoiceDescription').textContent='اختر لون العود من القائمة المتوفرة فقط.';
     renderMaterialPicker(single,'wood','العود',materialOptions.wood);
   }else{
-    mode.hidden=false;
+    setPanelVisible(mode,true);
     $('#materialChoiceTitle').textContent='اختيار ألوان العود + Plexy';
     $('#materialChoiceDescription').textContent=state.comboMode==='separate'?'اختر لوناً مستقلاً لكل مادة.':'اختر لوناً واحداً مشتركاً للعود + Plexy.';
     if(state.comboMode==='separate'){
-      separate.hidden=false;
+      setPanelVisible(separate,true);
+      setPanelVisible(uniform,false);
       renderMaterialPicker($('#plexiPicker'),'comboPlexi','بليكسي',materialOptions.plexi);
       renderMaterialPicker($('#woodPicker'),'comboWood','العود',materialOptions.wood);
     }else{
-      uniform.hidden=false;
+      // Uniform mode: hide the complete separate-color section and clear its old values
+      // so they can never affect the preview or the WhatsApp order.
+      setPanelVisible(separate,false);
+      setPanelVisible(uniform,true);
+      state.colorSelections.comboPlexi='';
+      state.colorSelections.comboWood='';
       renderMaterialPicker(uniform,'comboUniform','ألوان العود + البليكسي',materialOptions.uniform);
     }
   }
@@ -295,7 +315,18 @@ function colorSummary(){
   if(state.comboMode==='uniform')return `لون موحد: ${state.colorSelections.comboUniform||'غير محدد'}`;
   return `بليكسي: ${state.colorSelections.comboPlexi||'غير محدد'} | العود: ${state.colorSelections.comboWood||'غير محدد'}`;
 }
-$$('input[name="comboMode"]').forEach(r=>r.addEventListener('change',()=>{state.comboMode=r.value;renderMaterialChoices();updateColorPreview()}));
+$$('input[name="comboMode"]').forEach(r=>r.addEventListener('change',()=>{
+  if(!r.checked)return;
+  state.comboMode=r.value==='uniform'?'uniform':'separate';
+  if(state.comboMode==='uniform'){
+    state.colorSelections.comboPlexi='';
+    state.colorSelections.comboWood='';
+  }else{
+    state.colorSelections.comboUniform='';
+  }
+  renderMaterialChoices();
+  updateColorPreview();
+}));
 
 function openProduct(item){
   state.selected=item;
