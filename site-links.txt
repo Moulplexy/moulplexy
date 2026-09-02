@@ -1,0 +1,10 @@
+# MOULE PLEXY — CONTACT & SOCIAL LINKS
+# You can change any value below later without editing HTML or JavaScript.
+# Keep one value per line.
+
+GMAIL=moulplexy@gmail.com
+WHATSAPP=+212627709956
+INSTAGRAM=https://www.instagram.com/moulplexy/
+TIKTOK=https://www.tiktok.com/@moulplexy
+FACEBOOK=https://www.facebook.com/moulplexy
+YOUTUBE=https://www.youtube.com/@moulplexy

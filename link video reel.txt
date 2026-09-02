@@ -1,0 +1,8 @@
+# Put ONE video URL here.
+# Supported examples:
+# - Instagram Reel URL
+# - YouTube URL
+# - TikTok URL
+# - Direct video URL (.mp4 / .webm / .ogg / .mov when the server allows browser playback)
+# The website automatically adapts the player format when it can detect the source type.
+

@@ -1,0 +1,5 @@
+SITE_NAME=MOULE PLEXY
+DOMAIN=https://www.mouleplexy.site
+WHATSAPP=212627709956
+LOCATION=Casablanca, Morocco
+LANGUAGES=ar,fr
