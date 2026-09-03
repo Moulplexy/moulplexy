@@ -43,170 +43,46 @@ const standardColorHex={
   "الأبيض":"#f2f2f2","الأسود":"#111111","الغوز / الوردي":"#67c8c1","الأحمر":"#bd2525","الأخضر":"#248345","الأزرق":"#2f6fca","الأصفر":"#e0c52b","البرتقالي":"#e47b24","البنفسجي":"#7b45a4","الوردي":"#e58bab","البني":"#70462f","البيج":"#d8c29d","الرمادي":"#858585","الكحلي":"#24355f","الفيروزي":"#2bb9ad","السماوي":"#69cde4","الذهبي":"#d6ab43","الفضي":"#b9b9b9","الباج":"#cdbb96"
 };
 const colorBaseAssets={
-  plexy:'colors/plexy_colors/model.png',
-  wood:'colors/3od_colors/model.png',
-  'combo-different':'colors/3od_plexy_colors_different/model.png',
-  'combo-uniform':'colors/3od_plexy_colors_uniform/model.png'
+  plexy:'colors/plexy/background.png',
+  wood:'colors/3od/background.png',
+  'combo-different':'colors/plexy_3od/background.png',
+  'combo-uniform':'colors/plexy_3od/background.png'
 };
 
-// Exact material masks made from the photographic model.png files.
-// Only these areas are recoloured; the background, engraving, flower, gold details,
-// reflections and stand stay in their original pixels.
-const colorMaskAssets={
-  plexy:{material:'colors/plexy_colors/layers/material_mask.png'},
-  wood:{material:'colors/3od_colors/layers/material_mask.png'},
-  'combo-different':{
-    plexy:'colors/3od_plexy_colors_different/layers/plexy_mask.png',
-    wood:'colors/3od_plexy_colors_different/layers/wood_mask.png'
+// FINAL LAYERED COLOR SYSTEM:
+// Every category has its own fixed background + fixed decoration + ready-made material images.
+// script.js NEVER recolours the complete product image. It only stacks the selected material
+// PNGs over the two fixed layers. This keeps the writing/flower/engraving and background intact.
+const layeredColorAssets={
+  plexy:{
+    background:'colors/plexy/background.png',
+    decoration:'colors/plexy/decoration.png',
+    root:'colors/plexy/plexy_colors/'
   },
-  'combo-uniform':{
-    plexy:'colors/3od_plexy_colors_uniform/layers/plexy_mask.png',
-    wood:'colors/3od_plexy_colors_uniform/layers/wood_mask.png'
+  wood:{
+    background:'colors/3od/background.png',
+    decoration:'colors/3od/decoration.png',
+    root:'colors/3od/wood_colors/'
+  },
+  combo:{
+    background:'colors/plexy_3od/background.png',
+    decoration:'colors/plexy_3od/decoration.png',
+    woodRoot:'colors/plexy_3od/wood_colors/',
+    plexyRoot:'colors/plexy_3od/plexy_colors/'
   }
 };
-const $=s=>document.querySelector(s);
-const $$=s=>[...document.querySelectorAll(s)];
 
-function t(ar,fr){return state.lang==="ar"?ar:fr}
-function setLanguage(lang){
-  state.lang=lang;
-  document.documentElement.lang=lang;
-  document.documentElement.dir=lang==="ar"?"rtl":"ltr";
-  document.body.dir=lang==="ar"?"rtl":"ltr";
-  $$(".lang-btn").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
-  $$("[data-ar]").forEach(el=>{
-    const val=el.dataset[lang==="ar"?"ar":"fr"];
-    if(val!==undefined) el.textContent=val;
-  });
-  $$("#occasion option, #profile option").forEach(el=>{
-    const val=el.dataset[lang==="ar"?"ar":"fr"];
-    if(val!==undefined) el.textContent=val;
-  });
-  $("#galleryTitle").textContent=t(categoryMeta[state.category].titleAr,categoryMeta[state.category].titleFr);
-  renderGallery();
-  updateModalText();
-}
-$$(".lang-btn").forEach(b=>b.addEventListener("click",()=>setLanguage(b.dataset.lang)));
+const colorFileNames={
+  'الغوز miroir':'ghoz_miroir.png','Argenté miroir':'argente_miroir.png','Doré miroir':'dore_miroir.png','Bronze miroir':'bronze_miroir.png',
+  'الأبيض':'white.png','الأسود':'black.png','الغوز / الوردي':'pink-grey.png','الأحمر':'red.png','الأخضر':'green.png','الأزرق':'blue.png','الأصفر':'yellow.png','البرتقالي':'orange.png','البنفسجي':'purple.png','الوردي':'pink.png','البني':'brown.png','البيج':'beige.png','الرمادي':'gray.png','الكحلي':'navy.png','الفيروزي':'turquoise.png','السماوي':'sky.png','الذهبي':'gold.png','الفضي':'silver.png','الباج':'baj.png'
+};
 
-async function loadSiteConfig(){
-  try{
-    const r=await fetch("site-links.txt",{cache:"no-store"});
-    const text=await r.text();
-    text.split(/\r?\n/).forEach(line=>{
-      const clean=line.trim();
-      if(!clean || clean.startsWith("#") || !clean.includes("="))return;
-      const [key,...rest]=clean.split("=");
-      const value=rest.join("=").trim();
-      if(key.trim() && value)siteConfig[key.trim()]=value;
-    });
-  }catch(e){}
-  applySiteConfig();
-}
-function normalizePhone(v){return String(v||"").replace(/[^0-9]/g,"")}
-function applySiteConfig(){
-  const wa=normalizePhone(siteConfig.WHATSAPP);
-  document.querySelectorAll('a[href*="wa.me/"]').forEach(a=>a.href=`https://wa.me/${wa}`);
-  const email=$("#emailLink"); if(email){email.href=`mailto:${siteConfig.GMAIL}`;email.textContent=siteConfig.GMAIL}
-  const waFooter=$("#waFooter"); if(waFooter){waFooter.href=`https://wa.me/${wa}`;waFooter.textContent=siteConfig.WHATSAPP}
-  ["instagram","tiktok","facebook","youtube"].forEach(k=>{const el=$(`#${k}Link`);if(el)el.href=siteConfig[k.toUpperCase()]||DEFAULT_CONFIG[k.toUpperCase()]})
-  const year=$("#year"); if(year)year.textContent=new Date().getFullYear();
-}
-
-async function loadCatalog(){
-  try{
-    const res=await fetch("catalog.json",{cache:"no-store"});
-    const data=await res.json();
-    state.items=data;
-    switchCategory("plexi");
-    renderReelDecor();
-  }catch(e){
-    $("#gallery").innerHTML=`<div class="gallery-empty">${t("تعذر تحميل الكتالوج. تأكد من وجود catalog.json.","Impossible de charger le catalogue. Vérifiez que catalog.json est présent.")}</div>`;
-  }
-}
-
-function switchCategory(cat){
-  state.category=cat;
-  $$(".category-card").forEach(c=>c.classList.toggle("active",c.dataset.category===cat));
-  const meta=categoryMeta[cat];
-  $("#galleryKicker").textContent=meta[state.lang==="ar"?"ar":"fr"].toUpperCase();
-  $("#galleryTitle").textContent=t(meta.titleAr,meta.titleFr);
-  renderGallery();
-}
-
-$$(".category-card").forEach(c=>c.addEventListener("click",()=>switchCategory(c.dataset.category)));
-
-function renderGallery(){
-  const items=(state.items[state.category]||[]).filter(x=>!x.url.toLowerCase().endsWith(".mp4"));
-  $("#galleryCount").textContent=`${items.length} ${t("نموذج","modèles")}`;
-  $("#gallery").innerHTML="";
-  items.forEach((item,i)=>{
-    const b=document.createElement("button");
-    b.className="gallery-item";
-    b.type="button";
-    b.innerHTML=`<img loading="lazy" src="${encodeURI(item.url)}" alt="${categoryMeta[state.category][state.lang==="ar"?"ar":"fr"]} ${i+1}">`;
-    b.addEventListener("click",()=>openProduct(item));
-    $("#gallery").appendChild(b);
-  });
-}
-
-function allMaterialValues(groups){return groups.flatMap(g=>g.items)}
-function escapeHtml(value){return String(value).replace(/[&<>'"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[ch]));}
-function renderMaterialPicker(container, materialKey, title, groups){
-  if(!container)return;
-  const selected=state.colorSelections[materialKey]||"";
-  container.dataset.materialKey=materialKey;
-  container.innerHTML=`
-    <div class="picker-head"><h4>${escapeHtml(title)}</h4><span class="selected-color" data-selected-for="${materialKey}">${selected?escapeHtml(selected):colorLabels.choose}</span></div>
-    <div class="color-search-wrap"><span>⌕</span><input type="search" class="color-search" placeholder="${colorLabels.search}" autocomplete="off" data-search-for="${materialKey}"></div>
-    <div class="color-table" role="listbox" aria-label="${escapeHtml(title)}"></div>`;
-  const table=container.querySelector('.color-table');
-  const render=filter=>{
-    const q=String(filter||'').trim().toLocaleLowerCase();
-    table.innerHTML=groups.map(group=>{
-      const items=group.items.filter(x=>x.toLocaleLowerCase().includes(q));
-      if(!items.length)return '';
-      return `<div class="color-group"><div class="color-group-title">${escapeHtml(group.group)}</div><div class="color-options">${items.map(color=>`<button type="button" class="color-option ${selected===color?'active':''}" data-color="${escapeHtml(color)}" aria-selected="${selected===color}"><span class="color-dot" aria-hidden="true"></span><span>${escapeHtml(color)}</span></button>`).join('')}</div></div>`;
-    }).join('') || `<div class="no-color-results">لا يوجد هذا اللون في القائمة.</div>`;
-    table.querySelectorAll('.color-option').forEach(btn=>btn.addEventListener('click',()=>{
-      state.colorSelections[materialKey]=btn.dataset.color;
-      renderMaterialPicker(container,materialKey,title,groups);
-      updateColorPreview();
-    }));
-  };
-  container.querySelector('.color-search').addEventListener('input',e=>render(e.target.value));
-  render('');
-}
-
-function hexRgb(hex){
-  const m=String(hex||'').replace('#','');
-  if(!/^[0-9a-fA-F]{6}$/.test(m))return null;
-  return {r:parseInt(m.slice(0,2),16),g:parseInt(m.slice(2,4),16),b:parseInt(m.slice(4,6),16)}
-}
-function isMirrorColor(color){return typeof color==='string' && color.toLocaleLowerCase().includes('miroir')}
-
-function mirrorPalette(color){
-  const key=String(color||'').toLocaleLowerCase();
-  return {
-    'الغوز miroir':{base:[218,135,165],dark:[78,36,50],light:[255,205,220]},
-    'argenté miroir':{base:[190,198,212],dark:[42,48,60],light:[255,255,255]},
-    'doré miroir':{base:[218,157,42],dark:[70,35,8],light:[255,224,115]},
-    'bronze miroir':{base:[156,79,39],dark:[48,22,12],light:[220,137,78]}
-  }[key]||{base:[190,198,212],dark:[42,48,60],light:[255,255,255]};
-}
-
-function mirrorRgb(color,x,y,width,height,originalR,originalG,originalB){
-  const pal=mirrorPalette(color);
-  const lum=(0.2126*originalR+0.7152*originalG+0.0722*originalB)/255;
-  const light=Math.max(0,Math.min(1,lum));
-  const wave=.5+.5*Math.sin((x*0.035)+(y*0.018));
-  const shine=Math.pow(Math.max(0,wave),8);
-  const reflection=.18+.68*wave;
-  const out=[];
-  for(let c=0;c<3;c++){
-    const metallic=pal.dark[c]*(1-reflection)+pal.base[c]*reflection;
-    out[c]=Math.min(255,metallic*(.48+.78*light)+pal.light[c]*shine*.62);
-  }
-  return out;
+function colorAssetPath(root,color){
+  const file=colorFileNames[color];
+  if(!file)return '';
+  if(color==='الباج')return `${root}natural/${file}`;
+  if(color && color.toLocaleLowerCase().includes('miroir'))return `${root}miroir/${file}`;
+  return `${root}painted/${file}`;
 }
 
 function loadImage(src){
@@ -218,113 +94,45 @@ function loadImage(src){
   });
 }
 
-const colorMaskCache=new Map();
-async function loadColorMask(src,width,height){
-  const key=`${src}|${width}x${height}`;
-  if(colorMaskCache.has(key))return colorMaskCache.get(key);
-  const img=await loadImage(src);
-  const c=document.createElement('canvas');
-  c.width=width;c.height=height;
-  const ctx=c.getContext('2d',{willReadFrequently:true});
-  ctx.drawImage(img,0,0,width,height);
-  const data=ctx.getImageData(0,0,width,height).data;
-  const mask=new Uint8Array(width*height);
-  for(let p=0,i=0;p<mask.length;p++,i+=4)mask[p]=data[i];
-  colorMaskCache.set(key,mask);
-  return mask;
-}
-
-function applyTint(px,idx,target,originalR,originalG,originalB){
-  const lum=(0.2126*originalR+0.7152*originalG+0.0722*originalB)/255;
-  // Preserve the photographic texture/shadows while replacing only the material hue.
-  const shade=Math.max(.42,Math.min(1.18,.52+lum*.72));
-  px[idx]=Math.min(255,target.r*shade);
-  px[idx+1]=Math.min(255,target.g*shade);
-  px[idx+2]=Math.min(255,target.b*shade);
-}
-
-async function recolorCanvas(img,mode,colorA,colorB,colorAName='',colorBName=''){
+async function composeLayeredPreview(kind,plexiColor='',woodColor=''){
   const canvas=$('#colorPreviewCanvas');
   if(!canvas)return;
-
+  const assets=layeredColorAssets[kind];
+  if(!assets)return;
   try{
-    const ctx=canvas.getContext('2d',{willReadFrequently:true});
-    const width=img.naturalWidth;
-    const height=img.naturalHeight;
-    canvas.width=width;
-    canvas.height=height;
+    const [background,decoration]=await Promise.all([loadImage(assets.background),loadImage(assets.decoration)]);
+    const canvasWidth=background.naturalWidth, canvasHeight=background.naturalHeight;
+    canvas.width=canvasWidth; canvas.height=canvasHeight;
+    const ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,canvasWidth,canvasHeight);
+    ctx.drawImage(background,0,0);
+    ctx.drawImage(decoration,0,0);
 
-    // Start from the untouched photographic model. This is the fixed background.
-    ctx.clearRect(0,0,width,height);
-    ctx.drawImage(img,0,0);
-    const data=ctx.getImageData(0,0,width,height);
-    const px=data.data;
-    const assets=colorMaskAssets[mode];
-
-    let plexyMask=null,woodMask=null;
-    if(mode==='plexy'){
-      plexyMask=await loadColorMask(assets.material,width,height);
-    }else if(mode==='wood'){
-      woodMask=await loadColorMask(assets.material,width,height);
-    }else{
-      plexyMask=await loadColorMask(assets.plexy,width,height);
-      woodMask=await loadColorMask(assets.wood,width,height);
+    const images=[];
+    if(kind==='plexy' && plexiColor)images.push(colorAssetPath(assets.root,plexiColor));
+    if(kind==='wood' && woodColor)images.push(colorAssetPath(assets.root,woodColor));
+    if(kind==='combo'){
+      if(plexiColor)images.push(colorAssetPath(assets.plexyRoot,plexiColor));
+      if(woodColor)images.push(colorAssetPath(assets.woodRoot,woodColor));
     }
-
-    for(let p=0,i=0;p<width*height;p++,i+=4){
-      if(!px[i+3])continue;
-
-      let target=null,targetName='',m=0;
-      if(mode==='plexy'){
-        m=plexyMask[p]/255;
-        target=colorA;targetName=colorAName;
-      }else if(mode==='wood'){
-        m=woodMask[p]/255;
-        target=colorA;targetName=colorAName;
-      }else if(mode==='combo-different'){
-        if(plexyMask[p]){m=plexyMask[p]/255;target=colorA;targetName=colorAName}
-        else if(woodMask[p]){m=woodMask[p]/255;target=colorB;targetName=colorBName}
-      }else if(mode==='combo-uniform'){
-        if(plexyMask[p]){m=plexyMask[p]/255;target=colorA;targetName=colorAName}
-        else if(woodMask[p]){m=woodMask[p]/255;target=colorA;targetName=colorAName}
-      }
-      if(!target||m<=0)continue;
-
-      const oldR=px[i],oldG=px[i+1],oldB=px[i+2];
-      const x=p%width,y=Math.floor(p/width);
-      let rgb;
-      if(isMirrorColor(targetName)){
-        rgb=mirrorRgb(targetName,x,y,width,height,oldR,oldG,oldB);
-      }else{
-        rgb=[target.r,target.g,target.b];
-        const lum=(0.2126*oldR+0.7152*oldG+0.0722*oldB)/255;
-        const shade=Math.max(.42,Math.min(1.18,.52+lum*.72));
-        rgb=[rgb[0]*shade,rgb[1]*shade,rgb[2]*shade];
-      }
-      px[i]=oldR*(1-m)+Math.min(255,rgb[0])*m;
-      px[i+1]=oldG*(1-m)+Math.min(255,rgb[1])*m;
-      px[i+2]=oldB*(1-m)+Math.min(255,rgb[2])*m;
+    for(const src of images.filter(Boolean)){
+      const img=await loadImage(src);
+      ctx.drawImage(img,0,0);
     }
-
-    ctx.putImageData(data,0,0);
     canvas.classList.add('visible');
     $('#modalImg').style.visibility='hidden';
     $('#previewBadge').hidden=false;
   }catch(err){
+    console.error(err);
     canvas.classList.remove('visible');
     $('#modalImg').style.visibility='visible';
     $('#previewBadge').hidden=true;
-    console.error(err);
   }
 }
 
 function showPreviewImage(src){
   const canvas=$('#colorPreviewCanvas');
-  if(canvas){
-    canvas.classList.remove('visible');
-    canvas.width=1;
-    canvas.height=1;
-  }
+  if(canvas){canvas.classList.remove('visible');canvas.width=1;canvas.height=1;}
   $('#modalImg').style.visibility='visible';
   $('#previewBadge').hidden=true;
   $('#modalImg').src=encodeURI(src);
@@ -332,41 +140,28 @@ function showPreviewImage(src){
 
 async function updateColorPreview(){
   if(!state.selected)return;
-
-  let mode,colorA,colorB,colorAName='',colorBName='';
   if(state.category==='plexi'){
-    mode='plexy';
-    colorAName=state.colorSelections.plexi;
-    colorA=hexRgb(standardColorHex[colorAName])||{r:221,g:221,b:221};
-  }else if(state.category==='wood'){
-    mode='wood';
-    colorAName=state.colorSelections.wood;
-    colorA=hexRgb(standardColorHex[colorAName])||{r:138,g:90,b:59};
-  }else if(state.comboMode==='uniform'){
-    mode='combo-uniform';
-    colorAName=state.colorSelections.comboUniform;
-    colorA=hexRgb(standardColorHex[colorAName])||{r:178,g:122,b:72};
-  }else{
-    mode='combo-different';
-    colorAName=state.colorSelections.comboPlexi;
-    colorBName=state.colorSelections.comboWood;
-    colorA=hexRgb(standardColorHex[colorAName])||{r:221,g:221,b:221};
-    colorB=hexRgb(standardColorHex[colorBName])||{r:138,g:90,b:59};
-  }
-
-  const baseSrc=colorBaseAssets[mode];
-  if(!colorAName || (mode==='combo-different'&&!colorBName)){
-    showPreviewImage(baseSrc);
+    const color=state.colorSelections.plexi;
+    if(!color){showPreviewImage(colorBaseAssets.plexy);return;}
+    await composeLayeredPreview('plexy',color,'');
     return;
   }
-
-  try{
-    const base=await loadImage(baseSrc);
-    await recolorCanvas(base,mode,colorA,colorB,colorAName,colorBName);
-  }catch(err){
-    console.error(err);
-    showPreviewImage(baseSrc);
+  if(state.category==='wood'){
+    const color=state.colorSelections.wood;
+    if(!color){showPreviewImage(colorBaseAssets.wood);return;}
+    await composeLayeredPreview('wood','',color);
+    return;
   }
+  if(state.comboMode==='uniform'){
+    const color=state.colorSelections.comboUniform;
+    if(!color){showPreviewImage(colorBaseAssets['combo-uniform']);return;}
+    await composeLayeredPreview('combo',color,color);
+    return;
+  }
+  const plexiColor=state.colorSelections.comboPlexi;
+  const woodColor=state.colorSelections.comboWood;
+  if(!plexiColor && !woodColor){showPreviewImage(colorBaseAssets['combo-different']);return;}
+  await composeLayeredPreview('combo',plexiColor,woodColor);
 }
 
 function renderMaterialChoices(){
