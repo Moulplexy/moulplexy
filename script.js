@@ -89,7 +89,10 @@ function switchCategory(cat){
 $$(".category-card").forEach(c=>c.addEventListener("click",()=>switchCategory(c.dataset.category)));
 
 function renderGallery(){
-  const items=(state.items[state.category]||[]).filter(x=>!x.url.toLowerCase().match(/\.(mp4|webm|ogg|mov|m4v)(?:[?#].*)?$/));
+  const items=(state.items[state.category]||[]).filter(x=>{
+    const url=String(x.url||"").toLowerCase();
+    return /\.(jpe?g|png|webp|gif|jfif)(?:[?#].*)?$/.test(url);
+  });
   $("#galleryCount").textContent=`${items.length} ${t("نموذج","modèles")}`;
   $("#gallery").innerHTML="";
   items.forEach((item,i)=>{
@@ -145,12 +148,15 @@ const comboPhotoAssets={
   "بيض|الأبيض":"colors/3od+plexy/byed-byed.png",
   "بيض|شيبي":"colors/3od+plexy/byed-chibi.png",
   "بيض|الغوز":"colors/3od+plexy/byed-ghoz.png",
+  "بيض|الذهبي":"colors/3od+plexy/byed-dahabi.png",
   "شيبي|الأبيض":"colors/3od+plexy/chibi-byed.png",
   "شيبي|شيبي":"colors/3od+plexy/chibi-chibi.png",
   "شيبي|الغوز":"colors/3od+plexy/chibi-ghoz.png",
+  "شيبي|الذهبي":"colors/3od+plexy/chibi-dahabi.png",
   "البني الفاتح|الأبيض":"colors/3od+plexy/boni-fate7-byed.png",
   "البني الفاتح|شيبي":"colors/3od+plexy/boni-fate7-chibi.png",
-  "البني الفاتح|الغوز":"colors/3od+plexy/boni-fate7-ghoz.png"
+  "البني الفاتح|الغوز":"colors/3od+plexy/boni-fate7-ghoz.png",
+  "البني الفاتح|الذهبي":"colors/3od+plexy/boni-fate7-dahabi.png"
 };
 
 function selectedColorPhoto(){
@@ -259,14 +265,19 @@ function openProduct(item){
   state.colorSelections={plexi:"",wood:"",comboPlexi:"",comboWood:""};
   $("#productModal").classList.remove("custom-mode");
 
-  const modelSrc=selectedColorPhoto();
-  $("#modalImg").src=encodeURI(modelSrc);
-  $("#modalImg").alt=categoryMeta[state.category][state.lang==="ar"?"ar":"fr"];
+  // MAIN IMAGE = prepared image from colors/.
+  // The selected catalog image is NEVER used as the main image.
+  const mainSrc = selectedColorPhoto();
+  const mainImg = $("#modalImg");
+  mainImg.src = encodeURI(mainSrc);
+  mainImg.alt = categoryMeta[state.category][state.lang==="ar"?"ar":"fr"];
+  mainImg.style.visibility = "visible";
 
+  // CATALOG IMAGE = small overlay only.
   const catalogOverlay=$("#selectedCatalogOverlay");
   if(catalogOverlay){
-    catalogOverlay.src=encodeURI(item.url);
-    catalogOverlay.alt=state.lang==="ar"?"Photo from catalog":"Photo du catalogue";
+    catalogOverlay.src = encodeURI(item.url);
+    catalogOverlay.alt = state.lang==="ar" ? "Photo from catalog" : "Photo du catalogue";
     catalogOverlay.hidden=false;
   }
 
@@ -275,9 +286,7 @@ function openProduct(item){
   document.body.style.overflow="hidden";
   updateModalText();
   renderMaterialChoices();
-  updateColorPreview();
 }
-
 function openCustomIdea(){
   state.selected=null;
   state.customIdea=true;

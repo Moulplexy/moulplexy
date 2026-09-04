@@ -1,5 +1,25 @@
 {
-  "plexy": [
+  "wood": [
+    {
+      "name": "WhatsApp Image 2026-09-02 at 14.38.15 (1).jpeg",
+      "url": "assets/3od catalog/WhatsApp Image 2026-09-02 at 14.38.15 (1).jpeg"
+    },
+    {
+      "name": "WhatsApp Image 2026-09-02 at 14.38.21 (3).jpeg",
+      "url": "assets/3od catalog/WhatsApp Image 2026-09-02 at 14.38.21 (3).jpeg"
+    },
+    {
+      "name": "WhatsApp Image 2026-09-02 at 14.38.24 (1).jpeg",
+      "url": "assets/3od catalog/WhatsApp Image 2026-09-02 at 14.38.24 (1).jpeg"
+    }
+  ],
+  "combo": [
+    {
+      "name": "WhatsApp Image 2026-09-02 at 14.38.25 (9).jpeg",
+      "url": "assets/plexy+3od catalog/WhatsApp Image 2026-09-02 at 14.38.25 (9).jpeg"
+    }
+  ],
+  "plexi": [
     {
       "name": "WhatsApp Image 2026-09-02 at 14.38.15 (2).jpeg",
       "url": "assets/plexy catalog/WhatsApp Image 2026-09-02 at 14.38.15 (2).jpeg"
@@ -71,30 +91,6 @@
     {
       "name": "WhatsApp Image 2026-09-02 at 14.38.26 (5).jpeg",
       "url": "assets/plexy catalog/WhatsApp Image 2026-09-02 at 14.38.26 (5).jpeg"
-    },
-    {
-      "name": "background.png",
-      "url": "assets/plexy catalog/background.png"
-    }
-  ],
-  "wood": [
-    {
-      "name": "WhatsApp Image 2026-09-02 at 14.38.15 (1).jpeg",
-      "url": "assets/3od catalog/WhatsApp Image 2026-09-02 at 14.38.15 (1).jpeg"
-    },
-    {
-      "name": "WhatsApp Image 2026-09-02 at 14.38.21 (3).jpeg",
-      "url": "assets/3od catalog/WhatsApp Image 2026-09-02 at 14.38.21 (3).jpeg"
-    },
-    {
-      "name": "WhatsApp Image 2026-09-02 at 14.38.24 (1).jpeg",
-      "url": "assets/3od catalog/WhatsApp Image 2026-09-02 at 14.38.24 (1).jpeg"
-    }
-  ],
-  "combo": [
-    {
-      "name": "WhatsApp Image 2026-09-02 at 14.38.25 (9).jpeg",
-      "url": "assets/plexy+3od catalog/WhatsApp Image 2026-09-02 at 14.38.25 (9).jpeg"
     }
   ]
 }
