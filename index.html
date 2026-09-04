@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="مول البليكسي — تصاميم Plexy والعود وحلول مخصصة للمناسبات والشركات في المغرب.">
+  <title>MOULE PLEXY | مول البليكسي</title>
+  <link rel="icon" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Image sizing rules: fixed cards, preserved aspect ratio, crop only the excess, never stretch/zoom. -->
+  <style id="fixed-image-rules">
+    /* Every catalog/category card keeps its own fixed square size. */
+    .category-image,
+    .gallery-item {
+      aspect-ratio: 1 / 1 !important;
+      overflow: hidden !important;
+    }
+
+    /* Rectangular photos are cropped to the square without distortion.
+       Square photos remain fully visible. */
+    .category-image img,
+    .gallery-item img {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+      object-fit: cover !important;
+      object-position: center center !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    .category-image img:hover,
+    .gallery-item img:hover {
+      transform: none !important;
+    }
+
+    /* The product preview/modal is different: show the whole product. */
+    .modal-image {
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+    }
+
+    .modal-image > img {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      transform: none !important;
+    }
+
+    #colorPreviewCanvas {
+      object-fit: contain !important;
+      object-position: center center !important;
+    }
+
+    @media (max-width: 900px) {
+      .modal-image > img,
+      #colorPreviewCanvas {
+        object-fit: contain !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Moule Plexy">
+      <img src="assets/logo.png" alt="MOULE PLEXY">
+    </a>
+    <nav class="nav">
+      <a href="#catalog" data-ar="الكتالوج" data-fr="Catalogue">الكتالوج</a>
+      <a href="#how" data-ar="كيف نشتغل؟" data-fr="Comment ça marche ?">كيف نشتغل؟</a>
+      <a href="#about" data-ar="من نحن" data-fr="À propos">من نحن</a>
+      <a href="#contact" data-ar="تواصل معنا" data-fr="Contact">تواصل معنا</a>
+    </nav>
+    <div class="header-actions">
+      <button class="lang-btn active" data-lang="ar">العربية</button>
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <a class="wa-mini" href="https://wa.me/212627709956" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow" data-ar="تصميم • صناعة • تخصيص" data-fr="Design • Fabrication • Personnalisation">تصميم • صناعة • تخصيص</span>
+        <h1 data-ar="قطعة واحدة يمكنها أن تصنع لحظتك." data-fr="Une pièce suffit à créer votre moment.">قطعة واحدة يمكنها أن تصنع لحظتك.</h1>
+        <p data-ar="نصمم ونصنع حلول Plexy والعود للمناسبات، الأعراس، أعياد الميلاد، الشركات والهدايا. اختر نموذجاً، عدّله كما تريد، وأرسل طلبك مباشرة عبر WhatsApp."
+           data-fr="Nous concevons et fabriquons des créations en plexy et en bois pour mariages, anniversaires, événements, entreprises et cadeaux. Choisissez un modèle, personnalisez-le et envoyez votre demande directement sur WhatsApp.">
+          نصمم ونصنع حلول Plexy والعود للمناسبات، الأعراس، أعياد الميلاد، الشركات والهدايا. اختر نموذجاً، عدّله كما تريد، وأرسل طلبك مباشرة عبر WhatsApp.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn primary" href="#catalog" data-ar="اكتشف الكتالوج" data-fr="Découvrir le catalogue">اكتشف الكتالوج</a>
+          <a class="btn ghost" href="#how" data-ar="كيف تطلب؟" data-fr="Comment commander ?">كيف تطلب؟</a>
+        </div>
+        <div class="hero-meta">
+          <span>CASABLANCA</span><i></i><span data-ar="المغرب كامل" data-fr="Tout le Maroc">المغرب كامل</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="gold-orbit orbit-a"></div>
+        <div class="gold-orbit orbit-b"></div>
+        <div class="hero-card">
+          <img src="assets/photos%20incon/plexy/photo%20incon%20plexy.jpeg" alt="Plexy">
+          <div class="hero-card-label"><strong>MOULE</strong><span>PLEXY</span></div>
+        </div>
+        <div class="hero-note" data-ar="اصنعها بطريقتك" data-fr="Créez-la à votre façon">اصنعها بطريقتك</div>
+      </div>
+    </section>
+
+    <section class="reel-section">
+      <div class="section-head">
+        <div>
+          <span class="kicker" data-ar="من منصاتنا إلى واقعك" data-fr="De nos plateformes à votre réalité">من Instagram إلى واقعك</span>
+          <h2 data-ar="شاهد الإلهام قبل أن تختار." data-fr="Voyez l’inspiration avant de choisir.">شاهد الإلهام قبل أن تختار.</h2>
+        </div>
+        <a id="reelLink" class="text-link" href="#" target="_blank" rel="noopener" hidden>Instagram ↗</a>
+      </div>
+      <div class="reel-tabs" id="reelTabs" aria-label="Video platforms"></div>
+      <div class="reel-stage" id="reelStage"><div class="reel-decor" id="reelDecor"></div><div class="reel-frame" id="reelFrame">
+        <div class="reel-placeholder">
+          <div class="play-ring">▶</div>
+          <h3 data-ar="ضع رابط الـ Reel في ملف: link video reel.txt" data-fr="Ajoutez le lien du Reel dans : link video reel.txt">ضع رابط الـ Reel في ملف: link video reel.txt</h3>
+          <p data-ar="سيظهر الرابط هنا تلقائياً بعد رفع الموقع." data-fr="Le lien apparaîtra ici automatiquement après la mise en ligne.">سيظهر الرابط هنا تلقائياً بعد رفع الموقع.</p>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="catalog" id="catalog">
+      <div class="section-head centered">
+        <span class="kicker" data-ar="كتالوج مول البليكسي" data-fr="Catalogue Moule Plexy">كتالوج مول البليكسي</span>
+        <h2 data-ar="ثلاثة عوالم. اختيارك واحد." data-fr="Trois univers. Un seul choix.">ثلاثة عوالم. اختيارك واحد.</h2>
+        <p data-ar="تصفح النماذج، اضغط على أي صورة لمشاهدتها بالحجم الكامل، ثم اختر التصميم الذي يناسب مناسبتك."
+           data-fr="Parcourez les modèles, cliquez sur une image pour l’agrandir, puis choisissez le design qui correspond à votre occasion.">
+          تصفح النماذج، اضغط على أي صورة لمشاهدتها بالحجم الكامل، ثم اختر التصميم الذي يناسب مناسبتك.
+        </p>
+      </div>
+      <div class="category-grid">
+        <button class="category-card active" data-category="plexi">
+          <div class="category-image"><img src="assets/photos%20incon/plexy/photo%20incon%20plexy.jpeg" alt="Plexy"></div>
+          <div><span class="category-no">01</span><h3 data-ar="Plexy" data-fr="Plexy">Plexy</h3><p data-ar="تصاميم عصرية، أسماء، ديكور وتفاصيل للمناسبات." data-fr="Créations modernes, noms, décoration et détails pour vos événements.">تصاميم عصرية، أسماء، ديكور وتفاصيل للمناسبات.</p></div>
+          <span class="arrow">←</span>
+        </button>
+        <button class="category-card" data-category="wood">
+          <div class="category-image"><img src="assets/photos%20incon/3od/photo%20incon%203od.jpeg" alt="Bois"></div>
+          <div><span class="category-no">02</span><h3 data-ar="العود" data-fr="Bois">العود</h3><p data-ar="دفء الخشب ولمسة طبيعية تليق بكل مناسبة." data-fr="La chaleur du bois avec une touche naturelle pour chaque occasion.">دفء الخشب ولمسة طبيعية تليق بكل مناسبة.</p></div>
+          <span class="arrow">←</span>
+        </button>
+        <button class="category-card" data-category="combo">
+          <div class="category-image"><img src="assets/photos%20incon/plexy%2B3od/photo%20incon%203od%2Bplexy.jfif" alt="Plexy + Bois"></div>
+          <div><span class="category-no">03</span><h3 data-ar="العود + Plexy" data-fr="Bois + Plexy">العود + Plexy</h3><p data-ar="مزيج فاخر يجمع أناقة Plexy مع روح الخشب." data-fr="Un mélange premium entre l’élégance du plexy et le caractère du bois.">مزيج فاخر يجمع أناقة Plexy مع روح الخشب.</p></div>
+          <span class="arrow">←</span>
+        </button>
+      </div>
+
+      <div class="gallery-wrap" id="galleryWrap">
+        <div class="gallery-head">
+          <div><span id="galleryKicker">PLEXY</span><h3 id="galleryTitle">اختيارات Plexy</h3></div>
+          <span id="galleryCount"></span>
+        </div>
+        <div class="gallery" id="gallery"></div>
+        <div class="gallery-actions">
+          <button class="slider-btn" id="prevBtn" aria-label="Previous">→</button>
+          <button class="slider-btn" id="nextBtn" aria-label="Next">←</button>
+        </div>
+        <button class="custom-idea-card" id="customIdeaBtn" type="button">
+          <span class="custom-idea-icon">✦</span>
+          <span class="custom-idea-copy">
+            <strong data-ar="خصّص الفكرة" data-fr="Personnalisez l’idée">خصّص الفكرة</strong>
+            <small data-ar="لم تجد ما تبحث عنه؟ اكتب فكرتك وسنحوّلها إلى تصميم مخصص." data-fr="Vous n’avez pas trouvé ce que vous cherchez ? Décrivez votre idée et nous créerons une pièce personnalisée.">لم تجد ما تبحث عنه؟ اكتب فكرتك وسنحوّلها إلى تصميم مخصص.</small>
+          </span>
+          <span class="custom-idea-arrow">←</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="how" id="how">
+      <div class="section-head">
+        <div><span class="kicker" data-ar="طلب بسيط، نتيجة واضحة" data-fr="Simple à commander, clair à réaliser">طلب بسيط، نتيجة واضحة</span>
+        <h2 data-ar="اختار. خصّص. أرسل." data-fr="Choisissez. Personnalisez. Envoyez.">اختار. خصّص. أرسل.</h2></div>
+      </div>
+      <div class="steps">
+        <article><b>01</b><h3 data-ar="اختر النموذج" data-fr="Choisissez le modèle">اختر النموذج</h3><p data-ar="ادخل إلى Plexy أو العود أو العود + Plexy، وتصفح الصور."
+          data-fr="Ouvrez Plexy, Bois ou Bois + Plexy et parcourez les modèles.">ادخل إلى Plexy أو العود أو العود + Plexy، وتصفح الصور.</p></article>
+        <article><b>02</b><h3 data-ar="حدّد طلبك" data-fr="Définissez votre demande">حدّد طلبك</h3><p data-ar="اختر الصورة، الكمية، المناسبة، المدينة، وهل أنت جمال/منظم أم مستهلك."
+          data-fr="Choisissez la photo, la quantité, l’occasion, la ville et indiquez si vous êtes professionnel ou particulier.">اختر الصورة، الكمية، المناسبة، المدينة، وهل أنت جمال/منظم أم مستهلك.</p></article>
+        <article><b>03</b><h3 data-ar="خصّص الفكرة" data-fr="Personnalisez l’idée">خصّص الفكرة</h3><p data-ar="إذا لم تجد ما تريد، اكتب فكرتك في خانة 500 حرف وسنستلمها كما وصفتها."
+          data-fr="Si aucun modèle ne vous convient, décrivez votre idée en 500 caractères maximum.">إذا لم تجد ما تريد، اكتب فكرتك في خانة 500 حرف وسنستلمها كما وصفتها.</p></article>
+        <article><b>04</b><h3 data-ar="أرسل عبر WhatsApp" data-fr="Envoyez sur WhatsApp">أرسل عبر WhatsApp</h3><p data-ar="يتم تجهيز رسالة منظمة تتضمن اختيارك ورابط الصورة ومعلومات الطلب."
+          data-fr="Un message structuré avec votre choix, le lien de l’image et les informations de commande est préparé.">يتم تجهيز رسالة منظمة تتضمن اختيارك ورابط الصورة ومعلومات الطلب.</p></article>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="about-box">
+        <span class="kicker" data-ar="MOULE PLEXY • CASABLANCA" data-fr="MOULE PLEXY • CASABLANCA">MOULE PLEXY • CASABLANCA</span>
+        <h2 data-ar="نصنع التفاصيل التي تبقى في الذاكرة." data-fr="Nous créons les détails qui restent en mémoire.">نصنع التفاصيل التي تبقى في الذاكرة.</h2>
+        <p data-ar="من حفلات الأعراس وأعياد الميلاد إلى تجهيزات الشركات والمناسبات الخاصة، نشتغل معكم من الفكرة إلى القطعة النهائية. نخدم الدار البيضاء وجميع أنحاء المغرب."
+           data-fr="Des mariages et anniversaires aux événements d’entreprise et occasions privées, nous vous accompagnons de l’idée à la pièce finale. Nous livrons à Casablanca et partout au Maroc.">
+          من حفلات الأعراس وأعياد الميلاد إلى تجهيزات الشركات والمناسبات الخاصة، نشتغل معكم من الفكرة إلى القطعة النهائية. نخدم الدار البيضاء وجميع أنحاء المغرب.
+        </p>
+        <a class="btn primary" href="https://wa.me/212627709956" target="_blank" rel="noopener" data-ar="تحدث معنا على WhatsApp" data-fr="Parler avec nous sur WhatsApp">تحدث معنا على WhatsApp</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="MOULE PLEXY">
+        <p data-ar="تصميم وصناعة وتخصيص من الدار البيضاء إلى جميع أنحاء المغرب." data-fr="Design, fabrication et personnalisation depuis Casablanca partout au Maroc.">تصميم وصناعة وتخصيص من الدار البيضاء إلى جميع أنحاء المغرب.</p>
+      </div>
+      <div class="footer-contact">
+        <span class="kicker" data-ar="تواصل معنا" data-fr="Contactez-nous">تواصل معنا</span>
+        <a class="contact-line" id="emailLink" href="mailto:moulplexy@gmail.com">moulplexy@gmail.com</a>
+        <a class="contact-line" id="waFooter" href="https://wa.me/212627709956" target="_blank" rel="noopener">+212 627 709 956</a>
+      </div>
+      <div class="social-block">
+        <span class="kicker" data-ar="تابعونا" data-fr="Suivez-nous">تابعونا</span>
+        <div class="social-grid">
+          <a class="social-link" id="instagramLink" href="https://www.instagram.com/moulplexy/" target="_blank" rel="noopener" aria-label="Instagram"><span class="social-icon">◎</span><span>Instagram</span></a>
+          <a class="social-link" id="tiktokLink" href="https://www.tiktok.com/@moulplexy" target="_blank" rel="noopener" aria-label="TikTok"><span class="social-icon">♪</span><span>TikTok</span></a>
+          <a class="social-link" id="facebookLink" href="https://www.facebook.com/moulplexy" target="_blank" rel="noopener" aria-label="Facebook"><span class="social-icon">f</span><span>Facebook</span></a>
+          <a class="social-link" id="youtubeLink" href="https://www.youtube.com/@moulplexy" target="_blank" rel="noopener" aria-label="YouTube"><span class="social-icon">▶</span><span>YouTube</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© <span id="year"></span> MOULE PLEXY</span><span data-ar="CASABLANCA • MAROC" data-fr="CASABLANCA • MAROC">CASABLANCA • MAROC</span></div>
+  </footer>
+
+  <button class="floating-order" id="floatingOrder"><span>✦</span><span data-ar="اطلب الآن" data-fr="Commander">اطلب الآن</span></button>
+
+  <div class="modal" id="productModal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <div class="modal-image"><img id="modalImg" src="" alt=""><img id="selectedCatalogOverlay" class="selected-catalog-overlay" src="" alt="" hidden><canvas id="colorPreviewCanvas" aria-label="معاينة اللون"></canvas><div id="previewBadge" class="preview-badge" hidden>معاينة حسب اختيارك</div></div>
+      <div class="modal-info">
+        <span class="kicker" id="modalCategory"></span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
+        <form id="orderForm">
+          <div class="form-grid">
+            <label><span data-ar="الكمية" data-fr="Quantité">الكمية</span><input id="qty" type="number" min="1" value="1" required></label>
+            <label><span data-ar="المناسبة" data-fr="Occasion">المناسبة</span><select id="occasion">
+              <option value="wedding" data-ar="عرس / زفاف" data-fr="Mariage">عرس / زفاف</option>
+              <option value="birthday" data-ar="عيد ميلاد" data-fr="Anniversaire">عيد ميلاد</option>
+              <option value="corporate" data-ar="شركة / حدث مهني" data-fr="Entreprise / événement professionnel">شركة / حدث مهني</option>
+              <option value="other" data-ar="مناسبة أخرى" data-fr="Autre">مناسبة أخرى</option>
+            </select></label>
+            <label><span data-ar="المدينة" data-fr="Ville">المدينة</span><input id="city" maxlength="80" placeholder="Casablanca" required></label>
+            <label><span data-ar="الصفة" data-fr="Profil">الصفة</span><select id="profile">
+              <option value="professional" data-ar="جمال / منظم / شركة" data-fr="Professionnel / organisateur / entreprise">جمال / منظم / شركة</option>
+              <option value="consumer" data-ar="مستهلك / فرد" data-fr="Particulier">مستهلك / فرد</option>
+            </select></label>
+          </div>
+
+          <section class="material-choice" id="materialChoice" hidden>
+            <div class="material-choice-head">
+              <div>
+                <span class="choice-kicker" data-ar="اختيار اللون" data-fr="Choix de la couleur">اختيار اللون</span>
+                <h3 id="materialChoiceTitle">لون Plexy</h3>
+                <p id="materialChoiceDescription">اختر لوناً من القائمة المتوفرة فقط.</p>
+              </div>
+            </div>
+
+            <div id="singleMaterialPicker" class="material-picker"></div>
+            <div id="separateMaterialPickers" class="separate-pickers" hidden>
+              <div class="material-picker" id="plexiPicker"></div>
+              <div class="material-picker" id="woodPicker"></div>
+            </div>
+          </section>
+
+          <label class="idea-label"><span data-ar="إذا كانت لديك فكرة خاصة (500 حرف كحد أقصى)" data-fr="Si vous avez une idée personnalisée (500 caractères max.)">إذا كانت لديك فكرة خاصة (500 حرف كحد أقصى)</span>
+            <textarea id="idea" maxlength="500" rows="4" placeholder="اكتب فكرتك هنا..."></textarea><small id="charCount">0/500</small></label>
+          <button class="btn primary full" type="submit"><span data-ar="إرسال الطلب عبر WhatsApp" data-fr="Envoyer la demande via WhatsApp">إرسال الطلب عبر WhatsApp</span> ↗</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
