@@ -11,6 +11,65 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <!-- Image sizing rules: fixed cards, preserved aspect ratio, crop only the excess, never stretch/zoom. -->
+  <style id="fixed-image-rules">
+    /* Every catalog/category card keeps its own fixed square size. */
+    .category-image,
+    .gallery-item {
+      aspect-ratio: 1 / 1 !important;
+      overflow: hidden !important;
+    }
+
+    /* Rectangular photos are cropped to the square without distortion.
+       Square photos remain fully visible. */
+    .category-image img,
+    .gallery-item img {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+      object-fit: cover !important;
+      object-position: center center !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    .category-image img:hover,
+    .gallery-item img:hover {
+      transform: none !important;
+    }
+
+    /* The product preview/modal is different: show the whole product. */
+    .modal-image {
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+    }
+
+    .modal-image > img {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      transform: none !important;
+    }
+
+    #colorPreviewCanvas {
+      object-fit: contain !important;
+      object-position: center center !important;
+    }
+
+    @media (max-width: 900px) {
+      .modal-image > img,
+      #colorPreviewCanvas {
+        object-fit: contain !important;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -51,7 +110,7 @@
         <div class="gold-orbit orbit-a"></div>
         <div class="gold-orbit orbit-b"></div>
         <div class="hero-card">
-          <img src="assets/plexi-icon.jpeg" alt="Plexy">
+          <img src="assets/photos incon/plexy/photo incon plexy.jpeg" alt="Plexy">
           <div class="hero-card-label"><strong>MOULE</strong><span>PLEXY</span></div>
         </div>
         <div class="hero-note" data-ar="اصنعها بطريقتك" data-fr="Créez-la à votre façon">اصنعها بطريقتك</div>
@@ -87,17 +146,17 @@
       </div>
       <div class="category-grid">
         <button class="category-card active" data-category="plexi">
-          <div class="category-image"><img src="assets/plexi-icon.jpeg" alt="Plexy"></div>
+          <div class="category-image"><img src="assets/photos incon/plexy/photo incon plexy.jpeg" alt="Plexy"></div>
           <div><span class="category-no">01</span><h3 data-ar="Plexy" data-fr="Plexy">Plexy</h3><p data-ar="تصاميم عصرية، أسماء، ديكور وتفاصيل للمناسبات." data-fr="Créations modernes, noms, décoration et détails pour vos événements.">تصاميم عصرية، أسماء، ديكور وتفاصيل للمناسبات.</p></div>
           <span class="arrow">←</span>
         </button>
         <button class="category-card" data-category="wood">
-          <div class="category-image"><img src="assets/wood-icon.jpeg" alt="Bois"></div>
+          <div class="category-image"><img src="assets/photos incon/3od/photo incon 3od.jpeg" alt="Bois"></div>
           <div><span class="category-no">02</span><h3 data-ar="العود" data-fr="Bois">العود</h3><p data-ar="دفء الخشب ولمسة طبيعية تليق بكل مناسبة." data-fr="La chaleur du bois avec une touche naturelle pour chaque occasion.">دفء الخشب ولمسة طبيعية تليق بكل مناسبة.</p></div>
           <span class="arrow">←</span>
         </button>
         <button class="category-card" data-category="combo">
-          <div class="category-image"><img src="assets/combo-icon.jfif" alt="Plexy + Bois"></div>
+          <div class="category-image"><img src="assets/photos incon/plexy+3od/photo incon 3od+plexy.jfif" alt="Plexy + Bois"></div>
           <div><span class="category-no">03</span><h3 data-ar="العود + Plexy" data-fr="Bois + Plexy">العود + Plexy</h3><p data-ar="مزيج فاخر يجمع أناقة Plexy مع روح الخشب." data-fr="Un mélange premium entre l’élégance du plexy et le caractère du bois.">مزيج فاخر يجمع أناقة Plexy مع روح الخشب.</p></div>
           <span class="arrow">←</span>
         </button>
@@ -184,7 +243,7 @@
     <div class="modal-backdrop"></div>
     <div class="modal-dialog" role="dialog" aria-modal="true">
       <button class="modal-close" id="modalClose" aria-label="Close">×</button>
-      <div class="modal-image"><img id="modalImg" src="" alt=""><canvas id="colorPreviewCanvas" aria-label="معاينة اللون"></canvas><div id="previewBadge" class="preview-badge" hidden>معاينة حسب اختيارك</div></div>
+      <div class="modal-image"><img id="modalImg" src="" alt=""><img id="selectedCatalogOverlay" class="selected-catalog-overlay" src="" alt="" hidden><canvas id="colorPreviewCanvas" aria-label="معاينة اللون"></canvas><div id="previewBadge" class="preview-badge" hidden>معاينة حسب اختيارك</div></div>
       <div class="modal-info">
         <span class="kicker" id="modalCategory"></span>
         <h2 id="modalTitle"></h2>
@@ -213,21 +272,13 @@
                 <p id="materialChoiceDescription">اختر لوناً من القائمة المتوفرة فقط.</p>
               </div>
             </div>
-
-            <div class="combo-mode" id="comboMode" hidden>
-              <span class="choice-label" data-ar="بالنسبة للعود + Plexy" data-fr="Pour Bois + Plexy">بالنسبة للعود + Plexy</span>
-              <div class="mode-options">
-                <label class="mode-option"><input type="radio" name="comboMode" value="separate" checked><span data-ar="لون مختلف لكل مادة" data-fr="Une couleur différente pour chaque matière">لون مختلف لكل مادة</span></label>
-                <label class="mode-option"><input type="radio" name="comboMode" value="uniform"><span data-ar="لون موحد للعود + Plexy" data-fr="Une couleur unique pour Bois + Plexy">لون موحد للعود + Plexy</span></label>
-              </div>
-            </div>
+</div>
 
             <div id="singleMaterialPicker" class="material-picker"></div>
             <div id="separateMaterialPickers" class="separate-pickers" hidden>
               <div class="material-picker" id="plexiPicker"></div>
               <div class="material-picker" id="woodPicker"></div>
             </div>
-            <div id="uniformMaterialPicker" class="material-picker" hidden></div>
           </section>
 
           <label class="idea-label"><span data-ar="إذا كانت لديك فكرة خاصة (500 حرف كحد أقصى)" data-fr="Si vous avez une idée personnalisée (500 caractères max.)">إذا كانت لديك فكرة خاصة (500 حرف كحد أقصى)</span>

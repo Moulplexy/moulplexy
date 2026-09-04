@@ -1,1 +1,0 @@
-Combo: background.png is the untouched fixed model. decoration.png keeps the gold decoration fixed. plexy_colors and wood_colors are independent ready-made images. Different uses one from each folder; Uniform uses the same selected color in both folders.

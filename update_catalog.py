@@ -3,13 +3,14 @@ import json
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "assets"
-EXTS = {".jpg",".jpeg",".png",".webp",".jfif",".mp4"}
+EXTS = {".jpg",".jpeg",".png",".webp",".jfif"}
+FOLDERS = {"plexy":"plexy catalog","wood":"3od catalog","combo":"plexy+3od catalog"}
 
 data = {}
-for key in ("plexi","wood","combo"):
-    folder = ASSETS / key
+for key, folder_name in FOLDERS.items():
+    folder = ASSETS / folder_name
     data[key] = [
-        {"name": p.name, "url": f"assets/{key}/{p.name}"}
+        {"name": p.name, "url": f"assets/{folder_name}/{p.name}"}
         for p in sorted(folder.iterdir())
         if p.is_file() and p.suffix.lower() in EXTS
     ]
